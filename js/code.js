@@ -325,7 +325,7 @@ class AuthHandler {
 
     try {
       // Updated payload: { firstName, lastName, username, password }
-      const response = await this.makeAPICall(`${this.apiBase}/register.php`, {
+      const response = await this.makeAPICall(`${this.apiBase}/Register.php`, {
         firstName,
         lastName,
         username,
