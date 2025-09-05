@@ -1,6 +1,6 @@
 class AuthHandler {
   constructor() {
-    this.apiBase = "https://134.199.200.196/LAMPAPI";
+    this.apiBase = "http://134.199.200.196/LAMPAPI";
     this.init();
   }
 
@@ -109,10 +109,10 @@ class AuthHandler {
 
   setupRealTimeValidation() {
     // Keep login email validation as-is, if you use email login
-    const loginEmailEl = document.getElementById("loginEmail");
-    if (loginEmailEl) {
-      loginEmailEl.addEventListener("blur", (e) => {
-        this.validateEmail(e.target, "loginEmailError");
+    const loginUsernameEl = document.getElementById("loginUsername");
+    if (loginUsernameEl) {
+      loginUsernameEl.addEventListener("blur", (e) => {
+        this.validateUsername(e.target, "loginUsernameError");
       });
     }
 
@@ -222,17 +222,11 @@ class AuthHandler {
   async handleLogin(e) {
     e.preventDefault();
 
-    const email = document.getElementById("loginEmail").value.trim();
+    const username = document.getElementById("loginUsername").value.trim();
     const password = document.getElementById("loginPassword").value;
 
     // Clear previous messages
     this.clearMessages();
-
-    // Validate fields
-    const isEmailValid = this.validateEmail(
-      document.getElementById("loginEmail"),
-      "loginEmailError"
-    );
 
     if (!password) {
       this.showFieldError(
@@ -243,14 +237,12 @@ class AuthHandler {
       return;
     }
 
-    if (!isEmailValid) return;
-
     // Show loading state
     this.setLoadingState("login", true);
 
     try {
-      const response = await this.makeAPICall(`${this.apiBase}/login.php`, {
-        email,
+      const response = await this.makeAPICall(`${this.apiBase}/Login.php`, {
+        username,
         password,
       });
 
@@ -266,16 +258,16 @@ class AuthHandler {
         }, 1500);
       } else {
         this.showFieldError(
-          document.getElementById("loginEmail"),
-          "loginEmailError",
+          document.getElementById("loginUsername"),
+          "loginUsernameError",
           response.message || "Invalid email or password"
         );
       }
     } catch (error) {
       console.error("Login error:", error);
       this.showFieldError(
-        document.getElementById("loginEmail"),
-        "loginEmailError",
+        document.getElementById("loginUsername"),
+        "loginUsernameError",
         "Network error. Please try again."
       );
     } finally {
