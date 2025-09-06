@@ -246,7 +246,7 @@ class AuthHandler {
         password,
       });
 
-      if (response.success) {
+      if (!response.error) {
         this.showSuccessMessage("Login successful! Redirecting...");
 
         if (response.token) {
@@ -260,7 +260,7 @@ class AuthHandler {
         this.showFieldError(
           document.getElementById("loginUsername"),
           "loginUsernameError",
-          response.message || "Invalid email or password"
+          response.error || "Invalid email or password"
         );
       }
     } catch (error) {
@@ -332,7 +332,7 @@ class AuthHandler {
         password,
       });
 
-      if (response.success) {
+      if (!response.error) {
         this.showSuccessMessage(response.message || "Registration successful!");
 
         // Clear form
