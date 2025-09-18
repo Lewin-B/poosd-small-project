@@ -3,6 +3,18 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
+    $origin = 'http://rickleinecker2025.me'; // be explicit if you can
+	header('Access-Control-Allow-Origin: ' . $origin);
+	header('Vary: Origin'); // helps caching proxies
+	header('Access-Control-Allow-Methods: POST, OPTIONS');
+
+	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+		header('Access-Control-Allow-Headers: ' . $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
+	} else {
+		header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, Authorization');
+	}
+	header('Content-Type: application/json');
+
     $inData = getRequestInfo();
 
     // ---- Inputs ----

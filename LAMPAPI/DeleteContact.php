@@ -5,13 +5,18 @@
     ini_set('log_errors', 1);
     ini_set('error_log', '/tmp/php_errors.log');
 
-    // Set proper HTTP headers
-    header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+    $origin = 'http://rickleinecker2025.me'; 
+	header('Access-Control-Allow-Origin: ' . $origin);
+	header('Vary: Origin'); 
+	header('Access-Control-Allow-Methods: POST, OPTIONS');
 
-    // Handle preflight OPTIONS request
+	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+		header('Access-Control-Allow-Headers: ' . $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
+	} else {
+		header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, Authorization');
+	}
+	header('Content-Type: application/json');
+
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit();
