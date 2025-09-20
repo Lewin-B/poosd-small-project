@@ -1,9 +1,9 @@
 
 <?php
 
-	$origin = 'http://rickleinecker2025.me'; // be explicit if you can
+	$origin = 'http://rickleinecker2025.me'; 
 	header('Access-Control-Allow-Origin: ' . $origin);
-	header('Vary: Origin'); // helps caching proxies
+	header('Vary: Origin'); 
 	header('Access-Control-Allow-Methods: POST, OPTIONS');
 
 	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {

@@ -3,9 +3,9 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    $origin = 'http://rickleinecker2025.me'; // be explicit if you can
+    $origin = 'http://rickleinecker2025.me';
 	header('Access-Control-Allow-Origin: ' . $origin);
-	header('Vary: Origin'); // helps caching proxies
+	header('Vary: Origin');
 	header('Access-Control-Allow-Methods: POST, OPTIONS');
 
 	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
@@ -24,13 +24,11 @@
     $phone     = trim($inData["phone"] ?? "");
     $email     = trim($inData["email"] ?? "");
 
-    // Basic validation
     if ($userId <= 0 || $firstName === "" || $lastName === "") {
         returnWithError("Missing required field(s): userId, firstName, lastName");
         exit;
     }
 
-    // Optional: simple email sanity check (non-fatal)
     if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         returnWithError("Invalid email format");
         exit;
@@ -42,13 +40,9 @@
         exit;
     }
 
-    // Use a transaction to be tidy (optional but nice)
     $conn->begin_transaction();
 
     try {
-        // 1) Duplicate check (per user):
-        //    Consider a contact duplicate if same first+last AND (same email OR same phone) for the same user.
-        //    If you prefer a different rule, tweak the WHERE clause.
         $dupSql = "
             SELECT ID 
             FROM Contacts 

@@ -1,4 +1,4 @@
-/* auth-styles.css - Modern authentication form styles with black and gold theme */
+
 
 * {
     margin: 0;
@@ -18,7 +18,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Animated background particles */
+
 body::before {
     content: '';
     position: fixed;

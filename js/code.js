@@ -196,16 +196,13 @@ class AuthHandler {
   }
 
   clearMessages() {
-    // Clear success message
     const s = document.getElementById("successMessage");
     if (s) s.classList.remove("show");
 
-    // Clear all error messages
     document.querySelectorAll(".error-message").forEach((error) => {
       error.classList.remove("show");
     });
 
-    // Clear error styling from inputs
     document.querySelectorAll(".form-group input").forEach((input) => {
       input.classList.remove("error");
     });
@@ -237,7 +234,6 @@ class AuthHandler {
       return;
     }
 
-    // Show loading state
     this.setLoadingState("login", true);
 
     try {
@@ -249,12 +245,10 @@ class AuthHandler {
       if (!response.error) {
         this.showSuccessMessage("Login successful! Redirecting...");
 
-        if (response.token) {
-          document.cookie = `auth_token=${response.token}; path=/; secure; samesite=strict`;
-        }
+        localStorage.setItem("userId", response.id);
 
         setTimeout(() => {
-          window.location.href = response.redirect || "/dashboard.php";
+          window.location.href = "/dashboard.html";
         }, 1500);
       } else {
         this.showFieldError(

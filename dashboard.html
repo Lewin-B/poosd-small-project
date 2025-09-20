@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management Dashboard</title>
+    <link rel="stylesheet" href="./css/dashboard-styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Contact Manager</h1>
+            <p class="dashboard-subtitle">Go Knights</p>
+            <div class="user-info" id="userInfo">
+                <span class="user-label">Current User: </span>
+                <span class="user-id" id="currentUserId"></span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <!-- No User Session Alert -->
+        <div class="section-card" id="noSessionAlert" style="display: none;">
+            <h2 class="section-title">Session Not Found</h2>
+            <div class="message error-message show">
+                No user session found. Please log in to access the contact dashboard.
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="action-btn" onclick="window.location.href='/login'">Go to Login</button>
+            </div>
+        </div>
+        <div id="mainDashboard">
+            <!-- Search Contacts Section -->
+            <div class="section-card">
+                <h2 class="section-title">Search Contacts</h2>
+                <div class="message success-message" id="searchSuccess"></div>
+                <div class="message error-message" id="searchError"></div>
+                
+                <form id="searchForm">
+                    <div class="form-group">
+                        <label for="searchQuery">Search Query (optional)</label>
+                        <input type="text" id="searchQuery" name="search" placeholder="Enter name, email, or phone to filter results">
+                    </div>
+                    <button type="submit" class="action-btn">Search My Contacts</button>
+                </form>
+                
+                <div class="loading-spinner" id="searchLoading"></div>
+                <div class="results-container" id="searchResults" style="display: none;">
+                    <div class="no-results" id="noSearchResults">No contacts found</div>
+                </div>
+            </div>
+
+            <!-- Add Contact Section -->
+            <div class="section-card">
+                <h2 class="section-title">Add New Contact</h2>
+                <div class="message success-message" id="addSuccess"></div>
+                <div class="message error-message" id="addError"></div>
+                
+                <form id="addForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Enter last name" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Enter email address">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter phone number">
+                        </div>
+                    </div>
+                    <button type="submit" class="action-btn">Add Contact</button>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="./js/dashboard-script.js"></script>
+</body>
+</html>

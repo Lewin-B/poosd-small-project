@@ -48,11 +48,9 @@
             exit();
         }
         $conn->set_charset("utf8mb4");
-
-        // Optional but nice: transaction
         $conn->begin_transaction();
 
-        // Ensure the contact exists and belongs to this user
+        // Ensure the contact exists
         $chk = $conn->prepare("SELECT ID FROM Contacts WHERE ID = ? AND UserID = ? LIMIT 1");
         if (!$chk) {
             error_log("DeleteContact.php: Prepare (check) failed: " . $conn->error);
