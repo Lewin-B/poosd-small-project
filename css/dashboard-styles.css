@@ -488,3 +488,183 @@ body::before {
         transition: none;
     }
 }
+
+.contact-item.editing {
+  border-color: #FFD700;
+  box-shadow: 0 10px 28px rgba(255, 215, 0, 0.22);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.14) 0%, rgba(255, 193, 7, 0.08) 100%);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+/* Container for inline form */
+.contact-edit {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+/* Use a slightly tighter grid than the main forms */
+.contact-edit .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Inputs inside edit state */
+.contact-edit input[type="text"],
+.contact-edit input[type="email"],
+.contact-edit input[type="tel"] {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 215, 0, 0.26);
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.contact-edit label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  color: rgba(255, 215, 0, 0.85);
+  font-weight: 600;
+}
+
+.contact-edit input::placeholder {
+  color: rgba(255, 215, 0, 0.45);
+}
+
+.contact-edit input:focus {
+  outline: none;
+  border-color: #FFD700;
+  background: rgba(0, 0, 0, 0.78);
+  box-shadow:
+    0 0 0 3px rgba(255, 215, 0, 0.15),
+    0 6px 18px rgba(255, 215, 0, 0.1);
+}
+
+/* Action row for Save/Cancel */
+.contact-edit .actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  justify-content: flex-end;
+}
+
+/* Buttons near the contact card header */
+.contact-actions {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+/* Compact ghost button used for Edit */
+.edit-contact-btn {
+  background: rgba(255, 215, 0, 0.12);
+  color: #FFD700;
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.edit-contact-btn:hover {
+  background: rgba(255, 215, 0, 0.18);
+  border-color: #FFD700;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.18);
+}
+
+.edit-contact-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Save/Cancel in the inline editor */
+.save-contact-btn,
+.cancel-edit-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+/* Primary (Save) */
+.save-contact-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFC107 55%, #FFB300 100%);
+  color: #000;
+  box-shadow: 0 8px 22px rgba(255, 215, 0, 0.28);
+}
+
+.save-contact-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(255, 215, 0, 0.36);
+  filter: brightness(1.03);
+}
+
+.save-contact-btn:active {
+  transform: translateY(0);
+}
+
+/* Secondary (Cancel) */
+.cancel-edit-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.cancel-edit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+.cancel-edit-btn:active {
+  transform: translateY(0);
+}
+
+/* Keep delete looking like a ghost icon; ensure spacing matches */
+.delete-contact-btn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  width: auto;
+  height: auto;
+  padding: 7px 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* Accessibility & disabled states */
+.save-contact-btn:disabled,
+.cancel-edit-btn:disabled,
+.edit-contact-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(10%);
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .contact-edit .form-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .contact-actions {
+    position: static;
+    margin-top: 12px;
+    justify-content: flex-end;
+  }
+}

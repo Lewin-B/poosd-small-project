@@ -44,17 +44,16 @@ function setupEventListeners() {
   document
     .getElementById("addForm")
     .addEventListener("submit", handleAddContact);
-  document
-    .getElementById("deleteForm")
-    .addEventListener("submit", handleDeleteContact);
+
+  // NOTE: Your HTML doesn’t include a #deleteForm; guard it so we don’t crash
+  const deleteForm = document.getElementById("deleteForm");
+  if (deleteForm) {
+    deleteForm.addEventListener("submit", handleDeleteContact);
+  }
 }
 
 function handleLogout() {
-  if (
-    confirm(
-      "Are you sure you want to logout? This will clear your session and redirect to login."
-    )
-  ) {
+  if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("userId");
     currentUserId = null;
     window.location.href = "/";
@@ -63,6 +62,7 @@ function handleLogout() {
 
 function showMessage(elementId, message, isError = false) {
   const element = document.getElementById(elementId);
+  if (!element) return;
   element.textContent = message;
   element.classList.add("show");
   setTimeout(() => {
@@ -72,7 +72,7 @@ function showMessage(elementId, message, isError = false) {
 
 function showLoading(elementId, show = true) {
   const element = document.getElementById(elementId);
-  element.style.display = show ? "block" : "none";
+  if (element) element.style.display = show ? "block" : "none";
 }
 
 function clearResults() {
@@ -85,7 +85,8 @@ function clearResults() {
 function clearAllForms() {
   document.getElementById("searchForm").reset();
   document.getElementById("addForm").reset();
-  document.getElementById("deleteForm").reset();
+  const deleteForm = document.getElementById("deleteForm");
+  if (deleteForm) deleteForm.reset();
 }
 
 // Search Contacts Handler
@@ -116,11 +117,7 @@ async function handleSearch(e) {
       }),
     });
 
-    console.log("Response: ", response);
-
     const data = await response.json();
-
-    console.log("Data: ", data);
 
     if (response.ok && data.results) {
       displaySearchResults(data.results);
@@ -155,8 +152,21 @@ function displaySearchResults(contacts) {
   const contactsHTML = contacts
     .map(
       (contact) => `
-        <div class="contact-item">
+        <div class="contact-item" id="contact-${
+          contact.id
+        }" data-contact='${JSON.stringify({
+        id: contact.id,
+        firstName: contact.firstName || "",
+        lastName: contact.lastName || "",
+        email: contact.email || "",
+        phone: contact.phone || "",
+      }).replace(/'/g, "&apos;")}'>
             <div class="contact-actions">
+                <button class="edit-contact-btn" onclick="enterEditMode(${
+                  contact.id
+                })">
+                    Edit
+                </button>
                 <button class="delete-contact-btn" onclick="deleteContactFromSearch(${
                   contact.id
                 })">
@@ -181,6 +191,138 @@ function displaySearchResults(contacts) {
   resultsContainer.innerHTML = contactsHTML;
   resultsContainer.style.display = "block";
 }
+
+// [EDITING] — Enter inline edit mode for a specific card
+window.enterEditMode = function (contactId) {
+  const card = document.getElementById(`contact-${contactId}`);
+  if (!card) return;
+
+  const data = JSON.parse(
+    card.getAttribute("data-contact").replace(/&apos;/g, "'")
+  );
+
+  card.innerHTML = `
+    <div class="contact-edit">
+      <div><strong>Editing Contact #${contactId}</strong></div>
+
+      <div class="form-row">
+        <div>
+          <label>First Name</label>
+          <input id="edit-firstName-${contactId}" type="text" value="${escapeAttr(
+    data.firstName
+  )}" />
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input id="edit-lastName-${contactId}" type="text" value="${escapeAttr(
+    data.lastName
+  )}" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label>Email</label>
+          <input id="edit-email-${contactId}" type="email" value="${escapeAttr(
+    data.email
+  )}" />
+        </div>
+        <div>
+          <label>Phone</label>
+          <input id="edit-phone-${contactId}" type="tel" value="${escapeAttr(
+    data.phone
+  )}" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="save-contact-btn" onclick="saveEdit(${contactId})">Save</button>
+        <button class="cancel-edit-btn" onclick="cancelEdit(${contactId})">Cancel</button>
+      </div>
+    </div>
+  `;
+};
+
+// [EDITING] — Save edit
+window.saveEdit = async function (contactId) {
+  if (!currentUserId) {
+    showMessage(
+      "searchError",
+      "User ID not found. Please refresh the page.",
+      true
+    );
+    return;
+  }
+
+  // Collect values
+  const firstName = document
+    .getElementById(`edit-firstName-${contactId}`)
+    .value.trim();
+  const lastName = document
+    .getElementById(`edit-lastName-${contactId}`)
+    .value.trim();
+  const email = (
+    document.getElementById(`edit-email-${contactId}`).value || ""
+  ).trim();
+  const phone = (
+    document.getElementById(`edit-phone-${contactId}`).value || ""
+  ).trim();
+
+  // Basic validation
+  if (!firstName || !lastName) {
+    showMessage("searchError", "First name and last name are required", true);
+    return;
+  }
+  if (email && !isValidEmail(email)) {
+    showMessage("searchError", "Please enter a valid email address", true);
+    return;
+  }
+
+  try {
+    // Assumes your backend exposes UpdateContact.php
+    const response = await fetch(`${API_BASE_URL}/EditContact.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: parseInt(currentUserId, 10),
+        id: parseInt(contactId, 10),
+        firstName,
+        lastName,
+        email,
+        phone,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showMessage("searchSuccess", "Contact updated successfully!");
+      // Refresh the list so the card goes back to display mode with new data
+      document.getElementById("searchForm").dispatchEvent(new Event("submit"));
+    } else {
+      showMessage(
+        "searchError",
+        data.error || "Failed to update contact",
+        true
+      );
+    }
+  } catch (err) {
+    console.error("Update contact error:", err);
+    showMessage(
+      "searchError",
+      "Network error occurred while updating contact",
+      true
+    );
+  }
+};
+
+// [EDITING] — Cancel edit: just re-run search to restore view
+window.cancelEdit = function (contactId) {
+  const searchForm = document.getElementById("searchForm");
+  if (document.getElementById("searchResults").style.display === "block") {
+    searchForm.dispatchEvent(new Event("submit"));
+  }
+};
 
 // Add Contact Handler
 async function handleAddContact(e) {
@@ -219,9 +361,7 @@ async function handleAddContact(e) {
   try {
     const response = await fetch(`${API_BASE_URL}/AddContact.php`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contactData),
     });
 
@@ -230,11 +370,11 @@ async function handleAddContact(e) {
     if (response.ok) {
       showMessage("addSuccess", "Contact added successfully!");
       e.target.reset(); // Clear the form
-
-      // Refresh search results if there are any
-      const searchForm = document.getElementById("searchForm");
+      // Refresh search results if visible
       if (document.getElementById("searchResults").style.display === "block") {
-        searchForm.dispatchEvent(new Event("submit"));
+        document
+          .getElementById("searchForm")
+          .dispatchEvent(new Event("submit"));
       }
     } else {
       showMessage("addError", data.error || "Failed to add contact", true);
@@ -249,7 +389,6 @@ async function handleAddContact(e) {
   }
 }
 
-// Delete Contact Handler
 async function handleDeleteContact(e) {
   e.preventDefault();
 
@@ -281,9 +420,7 @@ async function handleDeleteContact(e) {
   try {
     const response = await fetch(`${API_BASE_URL}/DeleteContact.php`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userId: currentUserId,
         contactId: contactId,
@@ -339,9 +476,7 @@ async function deleteContactFromSearch(contactId) {
   try {
     const response = await fetch(`${API_BASE_URL}/DeleteContact.php`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userId: currentUserId,
         contactId: contactId,
@@ -379,6 +514,14 @@ function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
+}
+
+function escapeAttr(text) {
+  return (text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 function handleApiError(response, data) {
@@ -420,6 +563,6 @@ function clearAllMessages() {
   messages.forEach((msg) => msg.classList.remove("show"));
 }
 
-window.addEventListener("popstate", function (e) {
+window.addEventListener("popstate", function () {
   initializeApp();
 });
