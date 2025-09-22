@@ -117,11 +117,11 @@
         $current = $res->fetch_assoc();
         $find->close();
 
-        // Values after update (fallback to existing if field not provided or empty string)
+        // Values after update
         $newFirst = ($firstName !== null && $firstName !== "") ? $firstName : $current["FirstName"];
         $newLast  = ($lastName  !== null && $lastName  !== "") ? $lastName  : $current["LastName"];
-        $newPhone = ($phone     !== null) ? $phone : $current["Phone"];   // allow clearing phone with empty string
-        $newEmail = ($email     !== null) ? $email : $current["Email"];   // allow clearing email with empty string
+        $newPhone = ($phone     !== null) ? $phone : $current["Phone"];
+        $newEmail = ($email     !== null) ? $email : $current["Email"];   
 
         // 2) Duplicate guard:
         $dupSql = "

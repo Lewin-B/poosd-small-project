@@ -316,7 +316,7 @@ window.saveEdit = async function (contactId) {
   }
 };
 
-// [EDITING] — Cancel edit: just re-run search to restore view
+// Cancel edit: just re-run search to restore view
 window.cancelEdit = function (contactId) {
   const searchForm = document.getElementById("searchForm");
   if (document.getElementById("searchResults").style.display === "block") {
@@ -369,8 +369,7 @@ async function handleAddContact(e) {
 
     if (response.ok) {
       showMessage("addSuccess", "Contact added successfully!");
-      e.target.reset(); // Clear the form
-      // Refresh search results if visible
+      e.target.reset();
       if (document.getElementById("searchResults").style.display === "block") {
         document
           .getElementById("searchForm")
