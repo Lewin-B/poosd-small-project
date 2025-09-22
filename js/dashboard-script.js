@@ -316,7 +316,7 @@ window.saveEdit = async function (contactId) {
   }
 };
 
-// Cancel edit: just re-run search to restore view
+// Cancel edit
 window.cancelEdit = function (contactId) {
   const searchForm = document.getElementById("searchForm");
   if (document.getElementById("searchResults").style.display === "block") {
